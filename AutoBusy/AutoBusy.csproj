@@ -2,5 +2,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="Dalamud.Plugin.Bootstrap.targets" />
 
-
 </Project>

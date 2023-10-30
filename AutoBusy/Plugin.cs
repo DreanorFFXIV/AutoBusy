@@ -1,4 +1,6 @@
-﻿using AutoBusy.Windows;
+﻿using System;
+using System.Threading.Tasks;
+using AutoBusy.Windows;
 using Dalamud.Game.Command;
 using Dalamud.IoC;
 using Dalamud.Plugin;
@@ -17,18 +19,20 @@ namespace AutoBusy
         private DalamudPluginInterface PluginInterface { get; init; }
         private ICommandManager CommandManager { get; init; }
         public Configuration Configuration { get; init; }
+        public IClientState ClientState { get; init; }
         public WindowSystem WindowSystem = new("AutoBusy");
 
         private ConfigWindow ConfigWindow { get; init; }
-        private delegate void MacroCallDelegate(RaptureShellModule* raptureShellModule, RaptureMacroModule.Macro* macro);
 
-        public Plugin(
+        public Plugin( 
             [RequiredVersion("1.0")] DalamudPluginInterface pluginInterface,
             [RequiredVersion("1.0")] ICommandManager commandManager,
-            [RequiredVersion("1.0")] IClientState clientState)
+            [RequiredVersion("1.0")] IClientState clientState,
+            IFramework frame)
         {
             this.PluginInterface = pluginInterface;
             this.CommandManager = commandManager;
+            this.ClientState = clientState;
 
             this.Configuration = this.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
             this.Configuration.Initialize(this.PluginInterface);
@@ -44,19 +48,16 @@ namespace AutoBusy
          
             this.PluginInterface.UiBuilder.Draw += DrawUI;
             this.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
-            clientState.Login += SetBusy;
+
+            clientState.Login += () =>
+            {
+                Task.Delay(TimeSpan.FromSeconds(5))
+                    .ContinueWith(task =>
+                        RaptureShellModule.Instance()->ExecuteMacro(RaptureMacroModule.Instance()->GetMacro(1U, 59)));
+
+            };
         }
 
-        private void SetBusy()
-        {
-            if (Configuration.Enabled)
-            {
-                //macro shared 59 > /busy
-                //ToDO: options etc
-                RaptureShellModule.Instance()->ExecuteMacro(RaptureMacroModule.Instance()->GetMacro(1U, 59));
-            }
-        }
-        
         public void Dispose()
         {
             this.WindowSystem.RemoveAllWindows();
