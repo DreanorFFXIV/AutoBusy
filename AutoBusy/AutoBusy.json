@@ -1,0 +1,11 @@
+{
+  "Author": "Dreanor",
+  "Name": "AutoBusy",
+  "Punchline": "AutoBusy",
+  "Description": "AutoBusy /pbusy",
+  "InternalName": "AutoBusy",
+  "ApplicableVersion": "any",
+  "Tags": [
+    "plugin"
+  ]
+}
