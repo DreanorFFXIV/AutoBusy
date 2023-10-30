@@ -4,10 +4,12 @@ using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
+using FFXIVClientStructs.FFXIV.Client.UI.Misc;
+using FFXIVClientStructs.FFXIV.Client.UI.Shell;
 
 namespace AutoBusy
 {
-    public sealed class Plugin : IDalamudPlugin
+    public sealed unsafe class Plugin : IDalamudPlugin
     {
         public string Name => "AutoBusy";
         private const string CommandName = "/pbusy";
@@ -18,6 +20,7 @@ namespace AutoBusy
         public WindowSystem WindowSystem = new("AutoBusy");
 
         private ConfigWindow ConfigWindow { get; init; }
+        private delegate void MacroCallDelegate(RaptureShellModule* raptureShellModule, RaptureMacroModule.Macro* macro);
 
         public Plugin(
             [RequiredVersion("1.0")] DalamudPluginInterface pluginInterface,
@@ -48,7 +51,9 @@ namespace AutoBusy
         {
             if (Configuration.Enabled)
             {
-                CommandManager.ProcessCommand("/busy");
+                //macro shared 59 > /busy
+                //ToDO: options etc
+                RaptureShellModule.Instance()->ExecuteMacro(RaptureMacroModule.Instance()->GetMacro(1U, 59));
             }
         }
         
