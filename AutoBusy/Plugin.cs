@@ -51,10 +51,12 @@ namespace AutoBusy
 
             clientState.Login += () =>
             {
-                Task.Delay(TimeSpan.FromSeconds(5))
-                    .ContinueWith(task =>
-                        RaptureShellModule.Instance()->ExecuteMacro(RaptureMacroModule.Instance()->GetMacro(1U, 59)));
-
+                if (Configuration.Enabled)
+                {
+                    Task.Delay(TimeSpan.FromSeconds(5))
+                        .ContinueWith(task =>
+                            RaptureShellModule.Instance()->ExecuteMacro(RaptureMacroModule.Instance()->GetMacro(1U, 59)));
+                }
             };
         }
 
