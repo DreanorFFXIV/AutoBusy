@@ -28,7 +28,7 @@ public class ConfigWindow : Window, IDisposable
         
         if (ImGui.Checkbox("Enabled", ref enabled))
         {
-            this.Configuration.Enabled = !enabled;
+            this.Configuration.Enabled = enabled;
             this.Configuration.Save();
         }
     }
